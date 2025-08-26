@@ -13,12 +13,12 @@ const Container = styled.div`
 `;
 
 const Left = styled.div`
-  width: 30%;
+  width: 20%;
   height: 100%;
 `;
 
 const Right = styled.div`
-  width: 30%; /* 右側30% */
+  width: 40%; /* 右側30% */
   height: 100%;
 `;
 const Swatch = styled.div`
@@ -124,7 +124,7 @@ function App() {
     g: 0,
     b: 0,
   });
-  const hasError = useMemo(
+  const hasLinearlyIndependentError = useMemo(
     () => !areColorsLinearlyIndependent(primaryColors),
     [primaryColors]
   );
@@ -182,6 +182,7 @@ function App() {
           )}
         </Left>
         <Right>
+          <h2>Mixing Ratio</h2>
           <Box sx={{ m: 3 }}>
             <SketchPicker
               color={targetColor}
@@ -192,17 +193,24 @@ function App() {
 
           <Box sx={{ m: 3 }}>
             <FlexRow>
-              <Color {...primaryColors.color1} />
-              {hasError ? "ERROR" : mixingRatios.x}
+              The color
+              <Color {...targetColor} />
+              can be expressed as a combination of:
             </FlexRow>
-            <FlexRow>
-              <Color {...primaryColors.color2} />
-              {hasError ? "ERROR" : mixingRatios.y}
-            </FlexRow>
-            <FlexRow>
-              <Color {...primaryColors.color3} />
-              {hasError ? "ERROR" : mixingRatios.z}
-            </FlexRow>
+            <Box sx={{ ml: 3, mt: 1 }}>
+              <FlexRow>
+                <Color {...primaryColors.color1} />
+                {hasLinearlyIndependentError ? "ERROR" : mixingRatios.x}
+              </FlexRow>
+              <FlexRow>
+                <Color {...primaryColors.color2} />
+                {hasLinearlyIndependentError ? "ERROR" : mixingRatios.y}
+              </FlexRow>
+              <FlexRow>
+                <Color {...primaryColors.color3} />
+                {hasLinearlyIndependentError ? "ERROR" : mixingRatios.z}
+              </FlexRow>
+            </Box>
           </Box>
         </Right>
       </Container>
