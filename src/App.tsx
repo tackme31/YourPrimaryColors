@@ -98,43 +98,45 @@ function App() {
       <Container>
         <Left>
           <h2>Primary Colors</h2>
-          <FlexRow>
-            <Swatch
-              onClick={() => {
-                setCurrentColor("color1");
-                setIsColorPickerDisplayed(!isColorPickerDisplayed);
-              }}
-            >
-              <Color {...primaryColors.color1} />
-            </Swatch>
-            <Swatch
-              onClick={() => {
-                setCurrentColor("color2");
-                setIsColorPickerDisplayed(!isColorPickerDisplayed);
-              }}
-            >
-              <Color {...primaryColors.color2} />
-            </Swatch>
-            <Swatch
-              onClick={() => {
-                setCurrentColor("color3");
-                setIsColorPickerDisplayed(!isColorPickerDisplayed);
-              }}
-            >
-              <Color {...primaryColors.color3} />
-            </Swatch>
+          Pick the primary colors you believe in.
+          <Box sx={{ m: 3 }}>
+            <FlexRow>
+              <Swatch
+                onClick={() => {
+                  setCurrentColor("color1");
+                  setIsColorPickerDisplayed(!isColorPickerDisplayed);
+                }}
+              >
+                <Color {...primaryColors.color1} />
+              </Swatch>
+              <Swatch
+                onClick={() => {
+                  setCurrentColor("color2");
+                  setIsColorPickerDisplayed(!isColorPickerDisplayed);
+                }}
+              >
+                <Color {...primaryColors.color2} />
+              </Swatch>
+              <Swatch
+                onClick={() => {
+                  setCurrentColor("color3");
+                  setIsColorPickerDisplayed(!isColorPickerDisplayed);
+                }}
+              >
+                <Color {...primaryColors.color3} />
+              </Swatch>
 
-            <Button
-              variant="contained"
-              size="small"
-              onClick={() =>
-                setPrimaryColors({ color1: RED, color2: GREEN, color3: BLUE })
-              }
-            >
-              Reset
-            </Button>
-          </FlexRow>
-
+              <Button
+                variant="contained"
+                size="small"
+                onClick={() =>
+                  setPrimaryColors({ color1: RED, color2: GREEN, color3: BLUE })
+                }
+              >
+                Reset
+              </Button>
+            </FlexRow>
+          </Box>
           {isColorPickerDisplayed && (
             <Popover>
               <Cover onClick={() => setIsColorPickerDisplayed(false)} />
@@ -153,6 +155,7 @@ function App() {
         </Left>
         <Right>
           <h2>Mixing Ratio</h2>
+          Mixing ratios with your primaries.
           <Box sx={{ m: 3 }}>
             <SketchPicker
               color={targetColor}
@@ -160,7 +163,6 @@ function App() {
               disableAlpha
             />
           </Box>
-
           <Box sx={{ m: 3 }}>
             <FlexRow>
               The color
@@ -182,53 +184,55 @@ function App() {
               </FlexRow>
             </Box>
           </Box>
-
           <hr />
           <h2>Color Mixer</h2>
-          <FlexRow>
-            <Color {...primaryColors.color1} />
-            <Slider
-              value={targetMixRatio.r}
-              onChange={(_, v) =>
-                setTargetMixRatio((prev) => ({ ...prev, r: v }))
-              }
-              sx={{ mx: 1 }}
-              step={1}
-              min={0}
-              max={255}
-            />
-            <Box width={30}>{targetMixRatio.r}</Box>
-          </FlexRow>
-          <FlexRow>
-            <Color {...primaryColors.color2} />
+          Mix your primaries.
+          <Box sx={{ m: 3 }}>
+            <FlexRow>
+              <Color {...primaryColors.color1} />
+              <Slider
+                value={targetMixRatio.r}
+                onChange={(_, v) =>
+                  setTargetMixRatio((prev) => ({ ...prev, r: v }))
+                }
+                sx={{ mx: 1 }}
+                step={1}
+                min={0}
+                max={255}
+              />
+              <Box width={30}>{targetMixRatio.r}</Box>
+            </FlexRow>
+            <FlexRow>
+              <Color {...primaryColors.color2} />
 
-            <Slider
-              value={targetMixRatio.g}
-              onChange={(_, v) =>
-                setTargetMixRatio((prev) => ({ ...prev, g: v }))
-              }
-              sx={{ mx: 1 }}
-              step={1}
-              min={0}
-              max={255}
-            />
-            <Box width={30}>{targetMixRatio.g}</Box>
-          </FlexRow>
-          <FlexRow>
-            <Color {...primaryColors.color3} />
+              <Slider
+                value={targetMixRatio.g}
+                onChange={(_, v) =>
+                  setTargetMixRatio((prev) => ({ ...prev, g: v }))
+                }
+                sx={{ mx: 1 }}
+                step={1}
+                min={0}
+                max={255}
+              />
+              <Box width={30}>{targetMixRatio.g}</Box>
+            </FlexRow>
+            <FlexRow>
+              <Color {...primaryColors.color3} />
 
-            <Slider
-              value={targetMixRatio.b}
-              onChange={(_, v) =>
-                setTargetMixRatio((prev) => ({ ...prev, b: v }))
-              }
-              sx={{ mx: 1 }}
-              step={1}
-              min={0}
-              max={255}
-            />
-            <Box width={30}>{targetMixRatio.b}</Box>
-          </FlexRow>
+              <Slider
+                value={targetMixRatio.b}
+                onChange={(_, v) =>
+                  setTargetMixRatio((prev) => ({ ...prev, b: v }))
+                }
+                sx={{ mx: 1 }}
+                step={1}
+                min={0}
+                max={255}
+              />
+              <Box width={30}>{targetMixRatio.b}</Box>
+            </FlexRow>
+          </Box>
           <Box sx={{ m: 3 }}>
             <FlexRow>HEX: {mixedHex}</FlexRow>
             <FlexRow>
@@ -236,14 +240,14 @@ function App() {
               <Color {...mixedColor} />
             </FlexRow>
           </Box>
-
           <hr />
           <h2>Color coverage</h2>
-          <Button variant="contained" onClick={handleOnClickCalculate}>
-            Calculate
-          </Button>
+          Calculate color coverage with your primaries.
           <Box sx={{ m: 3 }}>
             <FlexRow>
+              <Button variant="contained" onClick={handleOnClickCalculate}>
+                Go
+              </Button>
               Coverage: {calculating ? "calculating" : coverage}%
             </FlexRow>
           </Box>
