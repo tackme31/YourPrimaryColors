@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { SketchPicker } from "react-color";
 import "./App.css";
 
 function App() {
@@ -6,6 +7,7 @@ function App() {
 
   return (
     <>
+      <SketchPicker />
       <div></div>
     </>
   );
