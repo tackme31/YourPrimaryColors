@@ -7,6 +7,7 @@ import {
   areColorsLinearlyIndependent,
   estimateCoverageGridAsync,
   getMixingRatios,
+  getRandomInt,
   mixColors,
 } from "./libs";
 
@@ -62,6 +63,14 @@ const FlexRow = styled.div`
   align-items: center;
   gap: 8px;
 `;
+
+const getRandomColor = (): RGBColor => {
+  return {
+    r: getRandomInt(256),
+    g: getRandomInt(256),
+    b: getRandomInt(256),
+  };
+};
 
 function App() {
   const [isColorPickerDisplayed, setIsColorPickerDisplayed] =
@@ -125,17 +134,32 @@ function App() {
               >
                 <Color {...primaryColors.color3} />
               </Swatch>
-
-              <Button
-                variant="contained"
-                size="small"
-                onClick={() =>
-                  setPrimaryColors({ color1: RED, color2: GREEN, color3: BLUE })
-                }
-              >
-                Reset
-              </Button>
             </FlexRow>
+          </Box>
+          <Box sx={{ m: 3 }}>
+            <Button
+              variant="contained"
+              size="small"
+              onClick={() =>
+                setPrimaryColors({ color1: RED, color2: GREEN, color3: BLUE })
+              }
+            >
+              Reset
+            </Button>
+            <Button
+              sx={{ ml: 1 }}
+              variant="contained"
+              size="small"
+              onClick={() =>
+                setPrimaryColors({
+                  color1: getRandomColor(),
+                  color2: getRandomColor(),
+                  color3: getRandomColor(),
+                })
+              }
+            >
+              Random
+            </Button>
           </Box>
           {isColorPickerDisplayed && (
             <Popover>

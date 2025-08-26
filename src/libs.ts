@@ -118,3 +118,10 @@ export async function estimateCoverageGridAsync(
 
   return (insideCount / totalCount) * 100;
 }
+
+/**
+ * [0, max)の範囲の整数の乱数を返します
+ */
+export function getRandomInt(max: number) {
+  return Math.floor(Math.random() * max);
+}
