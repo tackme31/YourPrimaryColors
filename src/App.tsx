@@ -1,8 +1,8 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { type RGBColor, SketchPicker } from "react-color";
 import styled from "@emotion/styled";
-import { det, matrix, inv, multiply } from "mathjs";
-import { Box, Slider } from "@mui/material";
+import { det, matrix, inv, multiply, re } from "mathjs";
+import { Box, Button, Slider } from "@mui/material";
 
 const Container = styled.div`
   display: flex;
@@ -147,6 +147,36 @@ function mixColors(
   return [color, `#${hex.r}${hex.g}${hex.b}`];
 }
 
+/**
+ * 数値格子サンプリングで再現可能な色の割合を計算
+ */
+async function estimateCoverageGridAsync(
+  primaryColors: PrimaryColors,
+  step = 16
+): Promise<number> {
+  if (!areColorsLinearlyIndependent(primaryColors)) {
+    return 0;
+  }
+
+  let insideCount = 0;
+  let totalCount = 0;
+
+  for (let r = 0; r <= 255; r += step) {
+    for (let g = 0; g <= 255; g += step) {
+      for (let b = 0; b <= 255; b += step) {
+        totalCount++;
+        const target: RGBColor = { r, g, b };
+        const { x, y, z } = getMixingRatios(primaryColors, target);
+        if (x >= 0 && y >= 0 && z >= 0) insideCount++;
+      }
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 0));
+  }
+
+  return (insideCount / totalCount) * 100;
+}
+
 function App() {
   const [isColorPickerDisplayed, setIsColorPickerDisplayed] =
     useState<Boolean>(false);
@@ -176,6 +206,14 @@ function App() {
     [primaryColors, targetColor]
   );
   const [mixedColor, mixedHex] = mixColors(primaryColors, targetMixRatio);
+  const [calculating, setCalculating] = useState(false);
+  const [coverage, setCoverage] = useState(100);
+  const handleOnClickCalculate = useCallback(async () => {
+    setCalculating(true);
+    const result = await estimateCoverageGridAsync(primaryColors);
+    setCoverage(result);
+    setCalculating(false);
+  }, [primaryColors]);
 
   return (
     <>
@@ -304,12 +342,21 @@ function App() {
             <Box width={30}>{targetMixRatio.b}</Box>
           </FlexRow>
           <Box sx={{ m: 3 }}>
-            <FlexRow>
-              HEX: {mixedHex}
-            </FlexRow>
+            <FlexRow>HEX: {mixedHex}</FlexRow>
             <FlexRow>
               Mixed color:
               <Color {...mixedColor} />
+            </FlexRow>
+          </Box>
+
+          <hr />
+          <h2>Color coverage</h2>
+          <Button variant="contained" onClick={handleOnClickCalculate}>
+            Calculate
+          </Button>
+          <Box sx={{ m: 3 }}>
+            <FlexRow>
+              Coverage: {calculating ? "calculating" : coverage}%
             </FlexRow>
           </Box>
         </Right>
