@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import { type RGBColor, SketchPicker } from "react-color";
 import styled from "@emotion/styled";
-import { det, matrix, inv, multiply, re } from "mathjs";
+import { det, matrix, inv, multiply } from "mathjs";
 import { Box, Button, Slider } from "@mui/material";
 
 const Container = styled.div`
@@ -177,26 +177,23 @@ async function estimateCoverageGridAsync(
   return (insideCount / totalCount) * 100;
 }
 
+const BLACK: RGBColor = { r: 0, g: 0, b: 0 } as const;
+const RED: RGBColor = { r: 255, g: 0, b: 0 } as const;
+const GREEN: RGBColor = { r: 0, g: 255, b: 0 } as const;
+const BLUE: RGBColor = { r: 0, g: 0, b: 255 } as const;
+
 function App() {
   const [isColorPickerDisplayed, setIsColorPickerDisplayed] =
     useState<Boolean>(false);
   const [currentColor, setCurrentColor] =
     useState<keyof PrimaryColors>("color1");
   const [primaryColors, setPrimaryColors] = useState<PrimaryColors>({
-    color1: { r: 255, g: 0, b: 0 },
-    color2: { r: 0, g: 255, b: 0 },
-    color3: { r: 0, g: 0, b: 255 },
+    color1: RED,
+    color2: GREEN,
+    color3: BLUE,
   });
-  const [targetColor, setTargetColor] = useState<RGBColor>({
-    r: 255,
-    g: 0,
-    b: 0,
-  });
-  const [targetMixRatio, setTargetMixRatio] = useState<RGBColor>({
-    r: 0,
-    g: 0,
-    b: 0,
-  });
+  const [targetColor, setTargetColor] = useState<RGBColor>(RED);
+  const [targetMixRatio, setTargetMixRatio] = useState<RGBColor>(BLACK);
   const hasLinearlyIndependentError = useMemo(
     () => !areColorsLinearlyIndependent(primaryColors),
     [primaryColors]
@@ -245,6 +242,16 @@ function App() {
             >
               <Color {...primaryColors.color3} />
             </Swatch>
+
+            <Button
+              variant="contained"
+              size="small"
+              onClick={() =>
+                setPrimaryColors({ color1: RED, color2: GREEN, color3: BLUE })
+              }
+            >
+              Reset
+            </Button>
           </FlexRow>
 
           {isColorPickerDisplayed && (
