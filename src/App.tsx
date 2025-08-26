@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { type RGBColor, SketchPicker } from "react-color";
 import styled from "@emotion/styled";
 import { det, matrix, inv, multiply } from "mathjs";
-import { Box } from "@mui/material";
+import { Box, Slider } from "@mui/material";
 
 const Container = styled.div`
   display: flex;
@@ -109,6 +109,44 @@ export function getMixingRatios(
   return { x: ratios[0], y: ratios[1], z: ratios[2] };
 }
 
+function mixColors(
+  primaryColors: PrimaryColors,
+  ratios: RGBColor
+): [RGBColor, string] {
+  const [x, y, z] = [ratios.r, ratios.g, ratios.b];
+
+  const r =
+    (primaryColors.color1.r * x +
+      primaryColors.color2.r * y +
+      primaryColors.color3.r * z) /
+    255;
+  const g =
+    (primaryColors.color1.g * x +
+      primaryColors.color2.g * y +
+      primaryColors.color3.g * z) /
+    255;
+  const b =
+    (primaryColors.color1.b * x +
+      primaryColors.color2.b * y +
+      primaryColors.color3.b * z) /
+    255;
+
+  // 0~255にクリップして整数化
+  const color = {
+    r: Math.min(Math.max(Math.round(r), 0), 255),
+    g: Math.min(Math.max(Math.round(g), 0), 255),
+    b: Math.min(Math.max(Math.round(b), 0), 255),
+  };
+
+  // HEXに変換
+  const hex = {
+    r: ratios.r.toString(16).padStart(2, "0").toUpperCase(),
+    g: ratios.g.toString(16).padStart(2, "0").toUpperCase(),
+    b: ratios.b.toString(16).padStart(2, "0").toUpperCase(),
+  };
+  return [color, `#${hex.r}${hex.g}${hex.b}`];
+}
+
 function App() {
   const [isColorPickerDisplayed, setIsColorPickerDisplayed] =
     useState<Boolean>(false);
@@ -124,6 +162,11 @@ function App() {
     g: 0,
     b: 0,
   });
+  const [targetMixRatio, setTargetMixRatio] = useState<RGBColor>({
+    r: 0,
+    g: 0,
+    b: 0,
+  });
   const hasLinearlyIndependentError = useMemo(
     () => !areColorsLinearlyIndependent(primaryColors),
     [primaryColors]
@@ -132,6 +175,7 @@ function App() {
     () => getMixingRatios(primaryColors, targetColor),
     [primaryColors, targetColor]
   );
+  const [mixedColor, mixedHex] = mixColors(primaryColors, targetMixRatio);
 
   return (
     <>
@@ -211,6 +255,62 @@ function App() {
                 {hasLinearlyIndependentError ? "ERROR" : mixingRatios.z}
               </FlexRow>
             </Box>
+          </Box>
+
+          <hr />
+          <h2>Color Mixer</h2>
+          <FlexRow>
+            <Color {...primaryColors.color1} />
+            <Slider
+              value={targetMixRatio.r}
+              onChange={(_, v) =>
+                setTargetMixRatio((prev) => ({ ...prev, r: v }))
+              }
+              sx={{ mx: 1 }}
+              step={1}
+              min={0}
+              max={255}
+            />
+            <Box width={30}>{targetMixRatio.r}</Box>
+          </FlexRow>
+          <FlexRow>
+            <Color {...primaryColors.color2} />
+
+            <Slider
+              value={targetMixRatio.g}
+              onChange={(_, v) =>
+                setTargetMixRatio((prev) => ({ ...prev, g: v }))
+              }
+              sx={{ mx: 1 }}
+              step={1}
+              min={0}
+              max={255}
+            />
+            <Box width={30}>{targetMixRatio.g}</Box>
+          </FlexRow>
+          <FlexRow>
+            <Color {...primaryColors.color3} />
+
+            <Slider
+              value={targetMixRatio.b}
+              onChange={(_, v) =>
+                setTargetMixRatio((prev) => ({ ...prev, b: v }))
+              }
+              sx={{ mx: 1 }}
+              step={1}
+              min={0}
+              max={255}
+            />
+            <Box width={30}>{targetMixRatio.b}</Box>
+          </FlexRow>
+          <Box sx={{ m: 3 }}>
+            <FlexRow>
+              HEX: {mixedHex}
+            </FlexRow>
+            <FlexRow>
+              Mixed color:
+              <Color {...mixedColor} />
+            </FlexRow>
           </Box>
         </Right>
       </Container>
