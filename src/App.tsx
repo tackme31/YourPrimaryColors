@@ -141,24 +141,24 @@ function App() {
           <FlexRow>
             <Swatch
               onClick={() => {
-                setIsColorPickerDisplayed(!isColorPickerDisplayed);
                 setCurrentColor("color1");
+                setIsColorPickerDisplayed(!isColorPickerDisplayed);
               }}
             >
               <Color {...primaryColors.color1} />
             </Swatch>
             <Swatch
               onClick={() => {
-                setIsColorPickerDisplayed(!isColorPickerDisplayed);
                 setCurrentColor("color2");
+                setIsColorPickerDisplayed(!isColorPickerDisplayed);
               }}
             >
               <Color {...primaryColors.color2} />
             </Swatch>
             <Swatch
               onClick={() => {
-                setIsColorPickerDisplayed(!isColorPickerDisplayed);
                 setCurrentColor("color3");
+                setIsColorPickerDisplayed(!isColorPickerDisplayed);
               }}
             >
               <Color {...primaryColors.color3} />
