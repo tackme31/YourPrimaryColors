@@ -1,6 +1,14 @@
 import { det, inv, matrix, multiply } from "mathjs";
-import type { PrimaryColors } from "./types";
+import type { PrimaryColors, Vec3 } from "./types";
 import type { RGBColor } from "react-color";
+
+export function colorToVec3(color: RGBColor): Vec3 {
+  return {
+    x: color.r,
+    y: color.g,
+    z: color.b,
+  };
+}
 
 /**
  * 3つのRGBColorが線形独立かどうか判定する
