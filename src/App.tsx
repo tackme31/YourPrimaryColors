@@ -310,10 +310,8 @@ function App() {
             </FlexRow>
           </Box>
           <Box sx={{ m: 3 }}>
-            <FlexRow>HEX: {mixedHex}</FlexRow>
             <FlexRow>
-              Mixed color:
-              <Color {...mixedColor} />
+              The color {mixedHex} is <Color {...mixedColor} /> in your primaries.
             </FlexRow>
           </Box>
           <hr />
@@ -333,7 +331,7 @@ function App() {
           >
             <ambientLight />
             <GradientCube />
-            {coveredColors.map(({r, g, b}) => (
+            {coveredColors.map(({ r, g, b }) => (
               <RGBPoint x={r} y={g} z={b} />
             ))}
             <OrbitControls />
