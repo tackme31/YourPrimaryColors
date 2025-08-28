@@ -5,7 +5,7 @@ import { useCallback, useState } from "react";
 import { type RGBColor } from "react-color";
 import * as THREE from "three";
 import { colorToVec3, estimateCoverageGridAsync } from "../libs";
-import { BLACK, type PrimaryColors, type Vec3 } from "../types";
+import { BLACK, BLUE, RED, type PrimaryColors, type Vec3 } from "../types";
 import { FlexRow } from "./FlexRow";
 
 // -1~1 に変換してThree.js座標に
@@ -21,12 +21,12 @@ const getCubeIntersection = (v: Vec3): Vec3 => {
   const tY = v.y > 0 ? 255 / v.y : Infinity;
   const tZ = v.z > 0 ? 255 / v.z : Infinity;
 
-  const tMax = Math.min(tX, tY, tZ);
+  const tMin = Math.min(tX, tY, tZ);
 
   return {
-    x: v.x * tMax,
-    y: v.y * tMax,
-    z: v.z * tMax,
+    x: v.x * tMin,
+    y: v.y * tMin,
+    z: v.z * tMin,
   };
 };
 
@@ -34,29 +34,35 @@ type PointProps = {
   x: number; // 0~255
   y: number;
   z: number;
-  color?: RGBColor;
+  color?: string;
 };
 
-const RGBPoint = ({ x, y, z, color = BLACK }: PointProps) => {
+const RGBPoint = ({ x, y, z, color = "black" }: PointProps) => {
   const pos = normalize({ x, y, z });
 
   return (
     <mesh position={[pos[0], pos[1], pos[2]]}>
       <sphereGeometry args={[0.02, 16, 16]} />
-      <meshBasicMaterial color={[color.r, color.g, color.b]} />
+      <meshBasicMaterial color={color} />
     </mesh>
   );
 };
 
 const ColorAxis = ({ color }: { color: RGBColor }) => {
-  const end = getCubeIntersection(colorToVec3(color));
+  const end1 = colorToVec3(color);
+  const end2 = getCubeIntersection(colorToVec3(color));
 
   return (
     <>
       <Line
-        points={[[-1, -1, -1], normalize(end)]}
+        points={[[-1, -1, -1], normalize(end1)]}
         lineWidth={2}
         color={"black"}
+      />
+      <Line
+        points={[normalize(end1), normalize(end2)]}
+        lineWidth={2}
+        color={"red"}
       />
     </>
   );
@@ -90,7 +96,7 @@ const GradientCube = () => {
 
 type CoverageCubeProps = {
   colorAxises: PrimaryColors;
-  coveredColors: RGBColor[];
+  coveredColors: [RGBColor[], RGBColor[]];
 };
 const CoverageCube = ({
   colorAxises: primaryColors,
@@ -100,8 +106,11 @@ const CoverageCube = ({
     <Canvas style={{ height: 600 }} camera={{ position: [3, 3, 3], fov: 50 }}>
       <ambientLight />
       <GradientCube />
-      {coveredColors.map(({ r, g, b }) => (
-        <RGBPoint x={r} y={g} z={b} />
+      {coveredColors[0].map(({ r, g, b }) => (
+        <RGBPoint x={r} y={g} z={b} color="black" />
+      ))}
+      {coveredColors[1].map(({ r, g, b }) => (
+        <RGBPoint x={r} y={g} z={b} color="red" />
       ))}
       <ColorAxis color={primaryColors.color1} />
       <ColorAxis color={primaryColors.color2} />
@@ -118,13 +127,18 @@ type ColorCoverageProps = {
 export const ColorCoverage = ({ primaryColors }: ColorCoverageProps) => {
   const [calculating, setCalculating] = useState(false);
   const [coverage, setCoverage] = useState(100);
-  const [coveredColors, setCoveredColors] = useState<RGBColor[]>([]);
+  const [coveredColors, setCoveredColors] = useState<[RGBColor[], RGBColor[]]>([
+    [],
+    [],
+  ]);
   const [colorAxises, setColorAxises] = useState<PrimaryColors>(primaryColors);
   const handleOnClickCalculate = useCallback(async () => {
     setCalculating(true);
-    const [result, colors] = await estimateCoverageGridAsync(primaryColors);
+    const [result, colorsIn255, colorsOut255] = await estimateCoverageGridAsync(
+      primaryColors
+    );
     setCoverage(result);
-    setCoveredColors(colors);
+    setCoveredColors([colorsIn255, colorsOut255]);
     setColorAxises(primaryColors);
     setCalculating(false);
   }, [primaryColors]);

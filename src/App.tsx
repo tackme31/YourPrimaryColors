@@ -7,6 +7,7 @@ import { MixingRatio } from "./components/MixingRatio";
 import { PrimaryColorPicker } from "./components/PrimaryColorPicker";
 import { getRandomInt } from "./libs";
 import { BLUE, GREEN, RED, type PrimaryColors } from "./types";
+import { Box } from "@mui/material";
 
 const Container = styled.div`
   display: flex;
@@ -72,7 +73,13 @@ function App() {
           <ColorMixer primaryColors={primaryColors} />
           <hr />
           <h2>Color coverage</h2>
-          Calculate color coverage with your primaries.
+          The color coverage with your primaries.
+          <br />
+          <Box sx={{ ml: 2, mt: 1 }}>
+            Black dots: 0–255 colors.
+            <br />
+            Red dots: colors above 255.
+          </Box>
           <ColorCoverage primaryColors={primaryColors} />
         </Right>
       </Container>

@@ -103,13 +103,13 @@ export function mixColors(
 export async function estimateCoverageGridAsync(
   primaryColors: PrimaryColors,
   step = 16
-): Promise<[number, RGBColor[]]> {
+): Promise<[number, RGBColor[], RGBColor[]]> {
   if (!areColorsLinearlyIndependent(primaryColors)) {
-    return [0, []];
+    return [0, [], []];
   }
 
-  let colors: RGBColor[] = [];
-  let insideCount = 0;
+  const colorsIn255: RGBColor[] = [];
+  const colorsOut255: RGBColor[] = [];
   let totalCount = 0;
 
   let start = step / 2;
@@ -121,8 +121,11 @@ export async function estimateCoverageGridAsync(
         const target: RGBColor = { r, g, b };
         const { x, y, z } = getMixingRatios(primaryColors, target);
         if (x >= 0 && y >= 0 && z >= 0) {
-          insideCount++;
-          colors.push({ r, g, b });
+          if (x <= 1 && y <= 1 && z <= 1) {
+            colorsIn255.push({ r, g, b });
+          } else {
+            colorsOut255.push({ r, g, b });
+          }
         }
       }
     }
@@ -130,7 +133,9 @@ export async function estimateCoverageGridAsync(
     await new Promise((resolve) => setTimeout(resolve, 0));
   }
 
-  return [(insideCount / totalCount) * 100, colors];
+  const insideCount = colorsIn255.length + colorsOut255.length;
+
+  return [(insideCount / totalCount) * 100, colorsIn255, colorsOut255];
 }
 
 /**
